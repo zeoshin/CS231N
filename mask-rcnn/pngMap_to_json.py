@@ -41,11 +41,15 @@ for i in range(len(image_list)):
     filepath = pwd + '/train_label/' + image_name
     img = cv2.imread(filepath, -1)
 
+    instance_label = np.unique(img)
+    instance_label = instance_label[instance_label != 255]
+
+    id_list = list(map(lambda x: kaggle_to_coco[x//1000], instance_label))
+
     mask_list = []
-    for val in np.unique(img):
-        if val != 255:
-            mask_list.append(np.uint8(1) * (img == val))
-    for mask_i in mask_list:
+    for val in instance_label:
+        mask_list.append(np.uint8(1) * (img == val))
+    for j,mask_i in enumerate(mask_list):
         ground_truth_binary_mask = mask_i
         mask_sum = np.sum(mask_i)
         # print(ground_truth_binary_mask)
@@ -63,7 +67,7 @@ for i in range(len(image_list)):
             "iscrowd": 0,
             "image_id": i,
             "bbox": ground_truth_bounding_box.tolist(),
-            "category_id": 1,
+            "category_id": id_list[j],
             "id": annotation_counter
         }
         annotation_counter += 1
