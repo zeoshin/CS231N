@@ -17,7 +17,7 @@ kaggle_to_coco = {
     34: 4, #motorcycle
     39: 6, #bus
     38: 8, #truck
-    40: 2 # tricycle => bicycle 
+    40: 2 #tricycle => bicycle
 }
 
 for image in image_list:
