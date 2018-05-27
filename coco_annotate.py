@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import mask
 
 filepath = './example_label.png'
 img = cv2.imread(filepath, -1)
@@ -37,5 +38,9 @@ for mask in mask_list:
 		},
 	)
 
-print(labels_info)
+print(labels_info[0]['segmentation'][0])
+print()
+print(labels_info[0]['segmentation'][1])
 print(len(labels_info))
+
+

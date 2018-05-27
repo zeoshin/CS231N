@@ -9,15 +9,29 @@ from os import listdir
 pwd = '/home/HSZHAO/data/cvpr-2018-autonomous-driving'
 image_list = listdir(pwd + '/train_label')
 
+
+kaggle_to_coco = {
+    36: 1, #person
+    35: 2, #bicycle
+    33: 3, #car
+    34: 4, #motorcycle
+    39: 6, #bus
+    38: 8, #truck
+    40: 2 # tricycle => bicycle 
+}
+
 for image in image_list:
     filepath = pwd + '/train_label/' + '171206_034513181_Camera_6_instanceIds.png'
     img = cv2.imread(filepath, -1)
+    instance_label = np.unique(img)
+
+    id_list = list(map(lambda x: kaggle_to_coco[x//1000], instance_label))
 
     mask_list = []
-    for val in np.unique(img):
+    for val in instance_label:
         if val != 255:
             mask_list.append(np.uint8(1) * (img == val))
-    for mask_i in mask_list:
+    for i,mask_i in enumerate(mask_list):
         mask_sum = np.sum(mask_i)
         ground_truth_binary_mask = mask_i 
 # print(ground_truth_binary_mask)
@@ -35,8 +49,8 @@ for image in image_list:
             "iscrowd": 0,
             "image_id": 123,
             "bbox": ground_truth_bounding_box.tolist(),
-            "category_id": 1,
-            "id": 1
+            "category_id": id_list[i],
+            "id": i
         }
         for contour in contours:
             contour = np.flip(contour, axis=1)
