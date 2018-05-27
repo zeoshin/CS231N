@@ -102,17 +102,23 @@ def run_length_encode(mask):
 		run_str += '{} {}|'.format(run[0], run[1])
 	return run_str
 
-
+def create_submit_csv_header():
+        with open('submit_0.csv', 'w') as csvfile:
+                csvwriter = csv.writer(csvfile,  delimiter=',')
+                csvwriter.writerow( # header row
+                        ['ImageId','LabelId','PixelCount','Confidence','EncodedPixels']
+                )
 def create_submit_csv(img_ids, kaggle_results):
 	# img_ids: 			list of strings containing ImageId corresponding
 	#					to each item in kaggle_results
 	# kaggle_results:	result from coco processing, transformed for kaggle
 	timenow = re.sub('\ |\-|\:', '_', str(datetime.datetime.now()))
-	with open('submit_'+timenow+'.csv', 'w') as csvfile:
+	#with open('submit_'+timenow+'.csv', 'w') as csvfile:
+	with open('submit_0.csv', 'a') as csvfile:
 		csvwriter = csv.writer(csvfile,  delimiter=',')
-		csvwriter.writerow( # header row
-			['ImageId','LabelId','PixelCount','Confidence','EncodedPixels']
-		)
+		#csvwriter.writerow( # header row
+		#	['ImageId','LabelId','PixelCount','Confidence','EncodedPixels']
+		#)
 		row_data = ['']*5 # data rows
 		for i,result in enumerate(kaggle_results):
 			for instance in range(len(result['class_ids'])):

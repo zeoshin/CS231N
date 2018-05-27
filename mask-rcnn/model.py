@@ -2021,7 +2021,9 @@ class MaskRCNN(nn.Module):
         # Detections array is padded with zeros. Find the first class_id == 0.
         zero_ix = np.where(detections[:, 4] == 0)[0]
         N = zero_ix[0] if zero_ix.shape[0] > 0 else detections.shape[0]
-
+        #print("original shape is {}".format(image_shape))
+        #print("window is {}".format(window))
+        #print("mrcnn_mask shape is {}".format(mrcnn_mask.shape))
         # Extract boxes, class_ids, scores, and class-specific masks
         boxes = detections[:N, :4]
         class_ids = detections[:N, 4].astype(np.int32)

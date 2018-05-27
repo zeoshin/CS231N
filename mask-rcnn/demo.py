@@ -6,6 +6,7 @@ import numpy as np
 import skimage.io
 import matplotlib
 import matplotlib.pyplot as plt
+import pickle
 
 import coco
 import utils
@@ -72,6 +73,9 @@ image = skimage.io.imread(os.path.join(IMAGE_DIR, random.choice(file_names)))
 
 # Run detection
 results = model.detect([image])
+
+with open('results.pkl', 'wb') as f:  # Python 3: open(..., 'wb')
+    pickle.dump(results, f)
 
 # Visualize results
 r = results[0]

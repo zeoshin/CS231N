@@ -54,7 +54,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import visualize
 import transform_coco
-
+import copy
 # Root directory of the project
 ROOT_DIR = os.getcwd()
 
@@ -355,9 +355,10 @@ def evaluate_coco(model, dataset, coco, eval_type="bbox", limit=0, image_ids=Non
         image_ids = image_ids[:limit]
 
     # Get corresponding COCO image IDs.
+    print(len(image_ids))
     coco_image_ids = [dataset.image_info[id]["id"] for id in image_ids]
     kaggle_image_ids = [dataset.image_info[id]["path"].split('/')[-1].split('.')[0] for id in image_ids]
-
+    
     t_prediction = 0
     t_start = time.time()
 
@@ -370,7 +371,11 @@ def evaluate_coco(model, dataset, coco, eval_type="bbox", limit=0, image_ids=Non
         t = time.time()
         r = model.detect([image])[0]
         t_prediction += (time.time() - t)
-        rs.extend(r)
+        # rs.append(r)
+        # create submission one by one
+        print("detecting image with image_id = {} and kaggle_id = {}".format(image_id, kaggle_image_ids[i]))
+        kaggle_results = transform_coco.transform_coco_results([copy.deepcopy(r)])
+        transform_coco.create_submit_csv([kaggle_image_ids[i]], kaggle_results)
 
         # Convert results to COCO format
         image_results = build_coco_results(dataset, coco_image_ids[i:i + 1],
@@ -392,14 +397,15 @@ def evaluate_coco(model, dataset, coco, eval_type="bbox", limit=0, image_ids=Non
                'keyboard', 'cell phone', 'microwave', 'oven', 'toaster',
                'sink', 'refrigerator', 'book', 'clock', 'vase', 'scissors',
                'teddy bear', 'hair drier', 'toothbrush']
+        # print("{} {} {}".format(r['rois'].shape[0], r['masks'].shape[-1], r['class_ids'].shape[0]))
         visualize.display_instances(image, r['rois'], r['masks'], r['class_ids'],
                             class_names, r['scores'])
         plt.show()
-        plt.savefig('./coco2017_data/' + str(image_id) + '.png')
+        plt.savefig('./coco2017_data/' + str(kaggle_image_ids[i]) + '.png')
     
     # Create submission for kaggle
-    kaggle_results = transform_coco_results(rs)
-    create_submit_csv(kaggle_image_ids, kaggle_results)
+    # kaggle_results = transform_coco.transform_coco_results(rs)
+    # transform_coco.create_submit_csv(kaggle_image_ids, kaggle_results)
 
     # Load results. This modifies results with additional attributes.
     coco_results = coco.loadRes(results)

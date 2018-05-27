@@ -144,7 +144,11 @@ def display_instances(image, boxes, masks, class_ids, class_names,
             verts = np.fliplr(verts) - 1
             p = Polygon(verts, facecolor="none", edgecolor=color)
             ax.add_patch(p)
+    
+    #print(masked_image[0,:,0])
+    #print("masked_image size is: {}".format(masked_image.shape))
     ax.imshow(masked_image.astype(np.uint8))
+    plt.imsave('masked_image.png', masked_image.astype(np.uint8))
     plt.show()
     
 

@@ -300,6 +300,7 @@ def resize_image(image, min_dim=None, max_dim=None, padding=False):
         image_max = max(h, w)
         if round(image_max * scale) > max_dim:
             scale = max_dim / image_max
+    #print("min_dim is {0}, max_dim is {1}, scale is {2}".format(min_dim, max_dim, scale))
     # Resize image and mask
     if scale != 1:
         image = scipy.misc.imresize(
@@ -313,8 +314,10 @@ def resize_image(image, min_dim=None, max_dim=None, padding=False):
         left_pad = (max_dim - w) // 2
         right_pad = max_dim - w - left_pad
         padding = [(top_pad, bottom_pad), (left_pad, right_pad), (0, 0)]
+        #print("padding is {}".format(padding))
         image = np.pad(image, padding, mode='constant', constant_values=0)
         window = (top_pad, left_pad, h + top_pad, w + left_pad)
+    #print("the shape od resized input image is {}".format(image.shape))
     return image, window, scale, padding
 
 
