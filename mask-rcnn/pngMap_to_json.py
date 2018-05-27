@@ -24,13 +24,13 @@ for image in image_list:
     filepath = pwd + '/train_label/' + '171206_034513181_Camera_6_instanceIds.png'
     img = cv2.imread(filepath, -1)
     instance_label = np.unique(img)
+    instance_label = instance_label[instance_label != 255]
 
     id_list = list(map(lambda x: kaggle_to_coco[x//1000], instance_label))
 
     mask_list = []
     for val in instance_label:
-        if val != 255:
-            mask_list.append(np.uint8(1) * (img == val))
+        mask_list.append(np.uint8(1) * (img == val))
     for i,mask_i in enumerate(mask_list):
         mask_sum = np.sum(mask_i)
         ground_truth_binary_mask = mask_i 
