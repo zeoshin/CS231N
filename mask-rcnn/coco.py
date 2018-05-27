@@ -53,6 +53,8 @@ import torch
 import matplotlib
 import matplotlib.pyplot as plt
 import visualize
+import transform_coco
+
 # Root directory of the project
 ROOT_DIR = os.getcwd()
 
@@ -354,11 +356,12 @@ def evaluate_coco(model, dataset, coco, eval_type="bbox", limit=0, image_ids=Non
 
     # Get corresponding COCO image IDs.
     coco_image_ids = [dataset.image_info[id]["id"] for id in image_ids]
+    kaggle_image_ids = [dataset.image_info[id]["path"].split('/')[-1].split('.')[0] for id in image_ids]
 
     t_prediction = 0
     t_start = time.time()
 
-    results = []
+    rs, results = [], []
     for i, image_id in enumerate(image_ids):
         # Load image
         image = dataset.load_image(image_id)
@@ -367,6 +370,7 @@ def evaluate_coco(model, dataset, coco, eval_type="bbox", limit=0, image_ids=Non
         t = time.time()
         r = model.detect([image])[0]
         t_prediction += (time.time() - t)
+        rs.extend(r)
 
         # Convert results to COCO format
         image_results = build_coco_results(dataset, coco_image_ids[i:i + 1],
@@ -392,6 +396,11 @@ def evaluate_coco(model, dataset, coco, eval_type="bbox", limit=0, image_ids=Non
                             class_names, r['scores'])
         plt.show()
         plt.savefig('./coco2017_data/' + str(image_id) + '.png')
+    
+    # Create submission for kaggle
+    kaggle_results = transform_coco_results(rs)
+    create_submit_csv(kaggle_image_ids, kaggle_results)
+
     # Load results. This modifies results with additional attributes.
     coco_results = coco.loadRes(results)
 
