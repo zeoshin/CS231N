@@ -6,7 +6,7 @@ import time
 from collections import defaultdict
 from . import mask as maskUtils
 import copy
-
+import pickle
 class COCOeval:
     # Interface for evaluating detection on the Microsoft COCO dataset.
     #
@@ -188,6 +188,7 @@ class COCOeval:
         # compute iou between each dt and gt region
         iscrowd = [int(o['iscrowd']) for o in gt]
         ious = maskUtils.iou(d,g,iscrowd)
+        #print(ious)
         return ious
 
     def computeOks(self, imgId, catId):
@@ -427,7 +428,7 @@ class COCOeval:
         '''
         def _summarize( ap=1, iouThr=None, areaRng='all', maxDets=100 ):
             p = self.params
-            iStr = ' {:<18} {} @[ IoU={:<9} | area={:>6s} | maxDets={:>3d} ] = {:0.3f}'
+            iStr = ' {:<18} {} @[ IoU={:<9} | area={:>6s} | maxDets={:>3d} ] = {:0.8f}'
             titleStr = 'Average Precision' if ap == 1 else 'Average Recall'
             typeStr = '(AP)' if ap==1 else '(AR)'
             iouStr = '{:0.2f}:{:0.2f}'.format(p.iouThrs[0], p.iouThrs[-1]) \

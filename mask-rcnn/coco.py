@@ -30,7 +30,7 @@ Usage: import the module (see Jupyter notebooks for examples), or run from
 import os
 import time
 import numpy as np
-
+import pickle
 # Download and install the Python COCO tools from https://github.com/waleedka/coco
 # That's a fork from the original https://github.com/pdollar/coco with a bug
 # fix for Python 3.
@@ -83,7 +83,7 @@ class CocoConfig(Config):
     IMAGES_PER_GPU = 16
 
     # Uncomment to train on 8 GPUs (default is 1)
-    # GPU_COUNT = 8
+    GPU_COUNT = 1
 
     # Number of classes (including background)
     NUM_CLASSES = 1 + 80  # COCO has 80 classes
@@ -370,6 +370,8 @@ def evaluate_coco(model, dataset, coco, eval_type="bbox", limit=0, image_ids=Non
         # Run detection
         t = time.time()
         r = model.detect([image])[0]
+        with open(eval_type + '_single_kaggle.pkl', 'wb') as f:
+            pickle.dump(r, f)
         t_prediction += (time.time() - t)
         # rs.append(r)
         # create submission one by one
@@ -474,8 +476,8 @@ if __name__ == '__main__':
         class InferenceConfig(CocoConfig):
             # Set batch size to 1 since we'll be running inference on
             # one image at a time. Batch size = GPU_COUNT * IMAGES_PER_GPU
-            # GPU_COUNT = 1
-            GPU_COUNT = 0
+            GPU_COUNT = 1
+            # GPU_COUNT = 0
             IMAGES_PER_GPU = 1
             DETECTION_MIN_CONFIDENCE = 0
         config = InferenceConfig()
@@ -516,12 +518,14 @@ if __name__ == '__main__':
         # validation set, as as in the Mask RCNN paper.
         dataset_train = CocoDataset()
         dataset_train.load_coco(args.dataset, "train", year=args.year, auto_download=args.download)
-        dataset_train.load_coco(args.dataset, "valminusminival", year=args.year, auto_download=args.download)
+        #dataset_train.load_coco(args.dataset, "valminusminival", year=args.year, auto_download=args.download)
         dataset_train.prepare()
 
         # Validation dataset
         dataset_val = CocoDataset()
-        dataset_val.load_coco(args.dataset, "minival", year=args.year, auto_download=args.download)
+        #dataset_val.load_coco(args.dataset, "minival", year=args.year, auto_download=args.download)
+        dataset_val.load_coco(args.dataset, "train", year=args.year, auto_download=args.download)
+        #dataset_val.load_coco(args.dataset, "val", year=args.year, auto_download=args.download)
         dataset_val.prepare()
 
         # *** This training schedule is an example. Update to your needs ***

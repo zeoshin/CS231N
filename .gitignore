@@ -1,0 +1,6 @@
+mask-rcnn/coco2017_data
+*.png
+*.jpg
+*.csv
+*.pkl
+*.pth
