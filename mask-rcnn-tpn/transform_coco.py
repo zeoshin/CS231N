@@ -65,7 +65,7 @@ coco_to_kaggle = {
 	3: 33, #car
 	4: 34, #motorcycle
 	6: 39, #bus
-	8: 38  #truck
+	8: 38 #truck
 }
 
 def transform_coco_results(results):
