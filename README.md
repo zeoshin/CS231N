@@ -2,7 +2,9 @@
 Group project for CS231N
 
 mask-rcnn: the baseline architecture
+
 mask-rcnn-tpn: mask rcnn with tpn added
+
 mask-rcnn-tpn-spn: mask rcnn with tpn and spn added
 
 We used coco API to read datasets. You need to download the Kaggle dataset from:
